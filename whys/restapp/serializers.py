@@ -6,3 +6,5 @@ class AttributeNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttributeName
         fields = ["id", "name"]
+
+        #  https://stackoverflow.com/questions/45389188/customize-json-response-in-django-rest-framework

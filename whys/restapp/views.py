@@ -13,4 +13,3 @@ def attribute_name_list(request):
         print(serializer)
         return JsonResponse(serializer.data, safe=False)
 
-#  https://stackoverflow.com/questions/45389188/customize-json-response-in-django-rest-framework
