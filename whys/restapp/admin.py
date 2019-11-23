@@ -1,5 +1,5 @@
 from django.contrib import admin
-from restapp.models import Data
+from restapp.models import AttributeName
 
-admin.site.register(Data)
+admin.site.register(AttributeName)
 

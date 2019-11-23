@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from restapp.models import Data
+from restapp.models import AttributeName
 
 
-class DataSerializer(serializers.ModelSerializer):
+class AttributeNameSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Data
-        fields = ["id", "name", "data"]
+        model = AttributeName
+        fields = ["id", "name"]
