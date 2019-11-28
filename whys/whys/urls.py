@@ -19,6 +19,7 @@ from restapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("attributename", views.attribute_name_list, name="attributename"),
+    path("attributename/", views.attribute_name_list, name="attributename"),
+    path("import/", views.import_end_point, name="import"),
 
 ]
