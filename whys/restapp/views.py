@@ -18,10 +18,8 @@ def attribute_name_list(request):
 def import_end_point(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
-        print("i am from import view", data)
         serializer = DataSerializer(data=data, many = True)
         if serializer.is_valid():
-            print("I am valid!!")
             serializer.save()
             return JsonResponse(data, safe=False, status=201)
         return JsonResponse(status=400)
