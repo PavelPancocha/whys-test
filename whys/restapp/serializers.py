@@ -14,11 +14,19 @@ class DataSerializer(serializers.BaseSerializer):
 
     def create(self, validated_data):
         try:
+            print("validated_data: ", validated_data["name"], validated_data["eid"])
             item = Data.objects.get(name=validated_data["name"], eid=validated_data["eid"])
+            print("try item: ", item)
             old_data = eval(item.data)
+            print(old_data)
             new_data = validated_data["data"]
             old_data.update(new_data)
             validated_data["data"] = old_data
         except Data.DoesNotExist:
             pass
-        return Data.objects.update_or_create(**validated_data)
+        except Data.MultipleObjectsReturned:
+            print("this should not happenned")
+            data = Data.objects.filter(name=validated_data["name"], eid=validated_data["eid"])
+            print(data)
+        return Data.objects.update_or_create(name=validated_data["name"], eid=validated_data["eid"],
+                                             defaults={'data': validated_data["data"]})
