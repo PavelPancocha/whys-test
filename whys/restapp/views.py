@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from restapp.models import Data
 from restapp.serializers import DataSerializer
+from rest_framework.exceptions import ParseError
 
 
 @csrf_exempt
@@ -16,9 +17,15 @@ def import_end_point(request):
     Name and ID are required!
     """
     if request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = DataSerializer(data=data, many=True)
-        print(type(serializer), serializer)
+
+        try:
+            data = JSONParser().parse(request)
+            serializer = DataSerializer(data=data, many=True)
+            serializer.is_valid()
+        except KeyError:
+            return JsonResponse("Not correct data. Name, ID fields are required!", safe=False, status=400)
+        except ParseError:
+            return JsonResponse("Wrong data format. Parsing error.", safe=False, status=400)
         if isinstance(serializer, str):
             return JsonResponse(serializer, safe=False, status=400)
         if serializer.is_valid():
@@ -36,4 +43,4 @@ def list_data_view(request, name):
         else:
             return JsonResponse("Does not exist. Really. I looked twice!", safe=False, status=404)
     else:
-        return JsonResponse(status=400)
+        return JsonResponse("Accepting just GET", status=400)
