@@ -7,6 +7,5 @@ class Data(models.Model):
     data = models.TextField(max_length=1000, blank=True)
     unique_together = ['name', 'eid']
 
-
     def __str__(self):
         return "{} - Id: {}".format(self.name, self.eid)

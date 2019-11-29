@@ -24,9 +24,15 @@ class DataSerializer(serializers.BaseSerializer):
             validated_data["data"] = old_data
         except Data.DoesNotExist:
             pass
-        except Data.MultipleObjectsReturned:
-            print("this should not happenned")
+        except Data.MultipleObjectsReturned:  # this error shouldnt be possible if everything works
+            print("this should not happened")
             data = Data.objects.filter(name=validated_data["name"], eid=validated_data["eid"])
             print(data)
         return Data.objects.update_or_create(name=validated_data["name"], eid=validated_data["eid"],
                                              defaults={'data': validated_data["data"]})
+
+    def to_representation(self, instance):  # list representation
+        name = instance.name
+        eid = int(instance.eid)
+        representation = {name: {"id": eid}}
+        return representation
