@@ -17,7 +17,6 @@ def import_end_point(request):
     Name and ID are required!
     """
     if request.method == "POST":
-
         try:
             data = JSONParser().parse(request)
             serializer = DataSerializer(data=data, many=True)
@@ -26,8 +25,6 @@ def import_end_point(request):
             return JsonResponse("Not correct data. Name, ID fields are required!", safe=False, status=400)
         except ParseError:
             return JsonResponse("Wrong data format. Parsing error.", safe=False, status=400)
-        if isinstance(serializer, str):
-            return JsonResponse(serializer, safe=False, status=400)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(data, safe=False, status=201)
