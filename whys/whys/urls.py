@@ -22,5 +22,6 @@ urlpatterns = [
     path("import", views.import_end_point, name="import"),
     path("detail/<str:name>", views.list_data_view, name="list_view"),
     path("detail/<str:name>/<int:eid>", views.detail_data_view, name="detail_view"),
+    path("all", views.all_data_view, name="all_view"),
 
 ]

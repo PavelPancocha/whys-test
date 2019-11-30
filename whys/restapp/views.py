@@ -59,5 +59,17 @@ def detail_data_view(request, name, eid):
     else:
         return JsonResponse("Accepting just GET", safe=False, status=400)
 
+
 # TODO all view
+@csrf_exempt
+def all_data_view(request):
+    if request.method == "GET":
+        data = Data.objects.all()
+        if data:
+            serializer = DataSerializer(data, many=True)
+            return JsonResponse(serializer.data, safe=False, status=200)
+        else:
+            return JsonResponse("Does not exist. Really. I looked twice!", safe=False, status=404)
+    else:
+        return JsonResponse("Accepting just GET", safe=False, status=400)
 # TODO authentication
