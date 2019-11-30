@@ -14,11 +14,8 @@ class DataSerializer(serializers.BaseSerializer):
 
     def create(self, validated_data):
         try:
-            print("validated_data: ", validated_data["name"], validated_data["eid"])
             item = Data.objects.get(name=validated_data["name"], eid=validated_data["eid"])
-            print("try item: ", item)
             old_data = eval(item.data)
-            print(old_data)
             new_data = validated_data["data"]
             old_data.update(new_data)
             validated_data["data"] = old_data
@@ -26,13 +23,23 @@ class DataSerializer(serializers.BaseSerializer):
             pass
         except Data.MultipleObjectsReturned:  # this error shouldnt be possible if everything works
             print("this should not happened")
-            data = Data.objects.filter(name=validated_data["name"], eid=validated_data["eid"])
-            print(data)
         return Data.objects.update_or_create(name=validated_data["name"], eid=validated_data["eid"],
                                              defaults={'data': validated_data["data"]})
 
     def to_representation(self, instance):  # list representation
+        try:  # get rid of tuple when creating new objects and sending reply data
+            instance = instance[0]
+        except TypeError:
+            pass
         name = instance.name
         eid = int(instance.eid)
         representation = {name: {"id": eid}}
+        return representation
+
+
+class DataDetailSerializer(serializers.BaseSerializer):
+    def to_representation(self, instance):
+        name = instance.name
+        data = eval(instance.data)
+        representation = {name: data}
         return representation
