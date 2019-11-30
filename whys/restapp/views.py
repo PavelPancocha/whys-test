@@ -4,9 +4,15 @@ from rest_framework.parsers import JSONParser
 from restapp.models import Data
 from restapp.serializers import DataSerializer, DataDetailSerializer
 from rest_framework.exceptions import ParseError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 
 @csrf_exempt
+@api_view(["POST"])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def import_end_point(request):
     """
     Import point. Accepting anything in this format:
@@ -22,13 +28,14 @@ def import_end_point(request):
             serializer = DataSerializer(data=data, many=True)
             serializer.is_valid()
         except KeyError:
-            return JsonResponse("Not correct data. Name, ID fields are required!", safe=False, status=400)
+            return JsonResponse({"detail": "Not correct data. Name, ID fields are required!"}, safe=False, status=400)
         except ParseError:
-            return JsonResponse("Wrong data format. Parsing error.", safe=False, status=400)
+            return JsonResponse({"detail": "Wrong data format. Parsing error."}, safe=False, status=400)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, safe=False, status=201)
-        return JsonResponse("not valid data", safe=False, status=400)
+    else:
+        return JsonResponse({"detail": "Accepting only POST"}, safe=False, status=400)
 
 
 @csrf_exempt
@@ -39,28 +46,24 @@ def list_data_view(request, name):
             serializer = DataSerializer(data, many=True)
             return JsonResponse(serializer.data, safe=False, status=200)
         else:
-            return JsonResponse("Does not exist. Really. I looked twice!", safe=False, status=404)
+            return JsonResponse({"detail": "Does not exist. Really. I looked twice!"}, safe=False, status=404)
     else:
-        return JsonResponse("Accepting just GET", safe=False, status=400)
+        return JsonResponse({"detail": "Accepting just GET"}, safe=False, status=400)
 
 
 @csrf_exempt
 def detail_data_view(request, name, eid):
     if request.method == "GET":
-        print("got here", name, eid)
         data = Data.objects.filter(name__iexact=name, eid=eid)
-        print("__data__", data)
         if data:
             serializer = DataDetailSerializer(data[0], many=False)
-            print("serializer data", type(serializer.data), serializer.data)
             return JsonResponse(serializer.data, safe=True, status=200)
         else:
-            return JsonResponse("Does not exist. Really. I looked twice!", safe=False, status=404)
+            return JsonResponse({"detail": "Does not exist. Really. I looked twice!"}, safe=False, status=404)
     else:
-        return JsonResponse("Accepting just GET", safe=False, status=400)
+        return JsonResponse({"detail": "Accepting just GET"}, safe=False, status=400)
 
 
-# TODO all view
 @csrf_exempt
 def all_data_view(request):
     if request.method == "GET":
@@ -69,7 +72,6 @@ def all_data_view(request):
             serializer = DataSerializer(data, many=True)
             return JsonResponse(serializer.data, safe=False, status=200)
         else:
-            return JsonResponse("Does not exist. Really. I looked twice!", safe=False, status=404)
+            return JsonResponse({"detail": "Does not exist. Really. I looked twice!"}, safe=False, status=404)
     else:
-        return JsonResponse("Accepting just GET", safe=False, status=400)
-# TODO authentication
+        return JsonResponse({"detail": "Accepting just GET"}, safe=False, status=400)
