@@ -7,5 +7,8 @@ class Data(models.Model):
     data = models.TextField(max_length=1000, blank=True)
     unique_together = ['name', 'eid']
 
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["name", "eid"], name="uniq_data")]
+
     def __str__(self):
         return "{} - Id: {}".format(self.name, self.eid)
